@@ -1,0 +1,39 @@
+services:
+  mariadb:
+    image: bitnami/mariadb:latest
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=CAMBIA_ROOT_DB
+      - MARIADB_DATABASE=moodle
+      - MARIADB_USER=bn_moodle
+      - MARIADB_PASSWORD=CAMBIA_DB_PASS
+    volumes:
+      - moodle_mariadb_data:/bitnami/mariadb
+
+  moodle:
+    image: bitnami/moodle:latest
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      - MOODLE_DATABASE_TYPE=mariadb
+      - MOODLE_DATABASE_HOST=mariadb
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_USER=bn_moodle
+      - MOODLE_DATABASE_PASSWORD=CAMBIA_DB_PASS
+      - MOODLE_SITE_NAME=Mi Campus
+      - MOODLE_HOST=moodle.tudominio.com
+      - MOODLE_REVERSEPROXY=true
+      - MOODLE_SSLPROXY=true
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=CAMBIA_ADMIN_PASS
+      - MOODLE_EMAIL=tu-correo@dominio.com
+    volumes:
+      - moodle_app_data:/bitnami/moodle
+      - moodle_files_data:/bitnami/moodledata
+
+volumes:
+  moodle_mariadb_data:
+  moodle_app_data:
+  moodle_files_data:
